@@ -24,3 +24,13 @@ automatically.
 2. Updated the `bankReportsDemo` method in `BankApplication` to accept an `ApplicationContext` parameter. 
 This allows us to retrieve the `BankReportService` bean from the Spring context, which will have its dependencies injected.
 3. Replaced the `BankReportServiceImpl` object initialization with the Spring context bean retrieval.
+
+## Task 3
+1. Created and added `test-clients.xml` to the `resources` folder.
+2. Added `test-clients.xml` to the `ClassPathXmlApplicationContext`.
+3. Imported `application-context.xml` into `test-clients.xml` to reuse the bean definitions.
+4. Configured beans for `client1` and `client2` in `test-clients.xml`.
+5. Replaced `client_1` and `client_2` object initializations with beans retrieved from the Spring context.
+6. Created `clients.properties` file.
+7. Configured `PropertyPlaceholderConfigurer` bean.
+8. Updated `test-clients.xml` to use placeholders for client names.

@@ -2,14 +2,10 @@ import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
 import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.model.Client.Gender;
 import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
-import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
-import com.luxoft.bankapp.service.BankingImpl;
-import com.luxoft.bankapp.model.Client.Gender;
-import com.luxoft.bankapp.service.storage.ClientRepository;
-import com.luxoft.bankapp.service.storage.MapClientRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -20,7 +16,8 @@ public class BankApplication {
 
     public static void main(String[] args) {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml",
+                "test-clients.xml");
         Banking banking = initialize(context);
 
         workWithExistingClients(banking);
@@ -105,18 +102,9 @@ public class BankApplication {
 
         Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+        Client client_1 = (Client) context.getBean("client1");
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
-
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
-
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
-
-        AbstractAccount checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
+        Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
         banking.addClient(client_2);
