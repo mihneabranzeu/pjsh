@@ -34,3 +34,13 @@ This allows us to retrieve the `BankReportService` bean from the Spring context,
 6. Created `clients.properties` file.
 7. Configured `PropertyPlaceholderConfigurer` bean.
 8. Updated `test-clients.xml` to use placeholders for client names.
+
+# Exercise 2
+## Task 1
+Moved all dependency configurations form `application-context.xml` to annotations, to achieve annotation-based DI.
+1. Enabled annotation processing
+    ```xml
+    <context:annotation-config/>
+    ```
+2. Removed `autowire` attribute from `banking` bean.
+3. Updated `BankingImpl` class to use `@Autowired` for the `repository` field.
