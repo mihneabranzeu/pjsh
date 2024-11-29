@@ -14,3 +14,13 @@ retrieve the `Banking` bean from the Spring context, which will have its depende
 4. Replaced the `BankingImpl` object initialization with the Spring context bean retrieval. This ensures that the
 `Banking` bean is properly configured by Spring.
 5. Ran the tests in `BankApplicationTask1Tests` to ensure everything is working correctly.
+
+## Task 2
+1. Added the bean definition for `BankReportServiceImpl` to allow Spring to manage this bean and inject dependencies
+automatically.
+   ```xml
+   <bean id="bankReport" class="com.luxoft.bankapp.service.BankReportServiceImpl" autowire="byType"/>
+   ```
+2. Updated the `bankReportsDemo` method in `BankApplication` to accept an `ApplicationContext` parameter. 
+This allows us to retrieve the `BankReportService` bean from the Spring context, which will have its dependencies injected.
+3. Replaced the `BankReportServiceImpl` object initialization with the Spring context bean retrieval.
