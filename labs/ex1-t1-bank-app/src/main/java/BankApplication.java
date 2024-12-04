@@ -6,23 +6,87 @@ import com.luxoft.bankapp.model.Client.Gender;
 import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
 import com.luxoft.bankapp.service.Banking;
+import com.luxoft.bankapp.service.BankingImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
 
+@Configuration
+@ComponentScan("com.luxoft.bankapp")
+@PropertySource("classpath:clients.properties")
 public class BankApplication {
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private Environment environment;
 
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
 
+    @Bean(name = "client2")
+    public Client getDemoClient2() {
+        String name = environment.getProperty("client2");
+
+        Client client = new Client(name, Gender.MALE);
+        client.setCity("Kiev");
+
+        AbstractAccount checking = (CheckingAccount) applicationContext.getBean("checkingAccount2");
+
+        client.addAccount(checking);
+
+        return client;
+    }
+
+    @Bean(name = "checkingAccount1")
+    public CheckingAccount getDemoCheckingAccount1() {
+        return new CheckingAccount(1000);
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean(name = "savingAccount1")
+    public SavingAccount getDemoSavingAccount1() {
+        return new SavingAccount(1000);
+    }
+
+    @Bean(name = "checkingAccount2")
+    public CheckingAccount getDemoCheckingAccount2() {
+        return new CheckingAccount(1500);
+    }
+
+    @Bean(name = "client1")
+    public Client getDemoClient1() {
+        String name = environment.getProperty("client1");
+
+        Client client = new Client(name, Gender.MALE);
+        client.setCity("Moscow");
+
+        AbstractAccount saving = (SavingAccount) applicationContext.getBean("savingAccount1");
+        AbstractAccount checking = (CheckingAccount) applicationContext.getBean("checkingAccount1");
+
+        client.addAccount(saving);
+        client.addAccount(checking);
+
+        return client;
+    }
+
     public static void main(String[] args) {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml",
-                "test-clients.xml");
+//        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml",
+//                "test-clients.xml");
+        ApplicationContext context = new AnnotationConfigApplicationContext(BankApplication.class);
         Banking banking = initialize(context);
 
-        workWithExistingClients(banking);
+        workWithExistingClients(context);
 
-        bankingServiceDemo(banking);
+        bankingServiceDemo(context);
 
         bankReportsDemo(context);
     }
@@ -31,7 +95,7 @@ public class BankApplication {
 
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = (BankReportService) context.getBean("bankReport");
+        BankReportService reportService = (BankReportService) context.getBean(BankReportService.class);
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
 
@@ -40,9 +104,11 @@ public class BankApplication {
         System.out.println("Bank Credit Sum: " + reportService.getBankCreditSum());
     }
 
-    public static void bankingServiceDemo(Banking banking) {
+    public static void bankingServiceDemo(ApplicationContext context) {
 
         System.out.println("\n=== Initialization using Banking implementation ===\n");
+
+        Banking banking = (Banking) context.getBean(BankingImpl.class);
 
         Client anna = new Client(CLIENT_NAMES[2], Gender.FEMALE);
         anna = banking.addClient(anna);
@@ -60,10 +126,12 @@ public class BankApplication {
         banking.getAllAccounts(anna).stream().forEach(System.out::println);
     }
 
-    public static void workWithExistingClients(Banking banking) {
+    public static void workWithExistingClients(ApplicationContext context) {
 
         System.out.println("\n=======================================");
         System.out.println("\n===== Work with existing clients ======");
+
+        Banking banking = context.getBean(Banking.class);
 
         Client jonny = banking.getClient(CLIENT_NAMES[0]);
 
@@ -100,7 +168,7 @@ public class BankApplication {
      */
     public static Banking initialize(ApplicationContext context) {
 
-        Banking banking = (Banking) context.getBean("banking");
+        Banking banking = (Banking) context.getBean(Banking.class);
 
         Client client_1 = (Client) context.getBean("client1");
 

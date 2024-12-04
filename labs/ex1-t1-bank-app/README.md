@@ -44,3 +44,9 @@ Moved all dependency configurations form `application-context.xml` to annotation
     ```
 2. Removed `autowire` attribute from `banking` bean.
 3. Updated `BankingImpl` class to use `@Autowired` for the `repository` field.
+
+# Exercise 3
+1. Added `@Autowired` properties for `ApplicationContext` and `Environment`.
+2. Configured Beans for different types of clients and accounts.
+3. Updated methods in `BankApplication` to use the new beans.
+4. Updated test configurations.
